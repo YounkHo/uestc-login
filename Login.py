@@ -1,20 +1,23 @@
+import json
+import os
+import random
+import re
+import sys
+import time
+
 import requests
 from bs4 import BeautifulSoup
-import re
-import time
-import random
-import os
-import json
+
 from EncryptUtils import xEncode, base64_enc, sha1, md5
-import sys
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36 Edg/94.0.992.38",
 }
 
+
 class Login:
     def __init__(self, username, passwd, alway_online=True, ac_id="1", n="200", type="1", enc_ver="srun_bx1",
-                    action="login",
+                 action="login",
                     domain='@dx-uestc',
                     headers=HEADERS,
                     base_auth_url='http://10.253.0.237/',
@@ -73,7 +76,8 @@ class Login:
         }
         response = requests.get(self.login_url, params=params, headers=self.headers).text
         content = json.loads(response.replace(self.callback, '')[1:-1])
-        print(content['res'], content['username'].replace(self.domain, ''), self.ip)
+        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), content['res'],
+              content['username'].replace(self.domain, ''), self.ip)
         return content['res'], content['username'].replace(self.domain, ''), self.ip
 
     def get_chksum(self, challenge, info):
@@ -125,7 +129,7 @@ class Login:
         }
         response = requests.get(self.status_url, params=params, headers=self.headers).text
         content = json.loads(response.replace("dasdasdsada", '')[1:-1])
-        print(content)
+        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), content)
         if 'res' in content and content['res'] == 'not_online_error':
             self.login()
 
@@ -133,5 +137,6 @@ class Login:
 if __name__ == '__main__':
     username = sys.argv[1]
     passwd = sys.argv[2]
-    login = Login(username, passwd)
+    login = Login(username, passwd)  # For Lab (主楼B1)
+    # login = Login(username, passwd, ac_id="3", domain="@cmcc", base_auth_url="http://10.253.0.237/") # For dormitory (硕丰6组团-21栋)
     login.run()
