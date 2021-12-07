@@ -6,11 +6,11 @@
 ## 使用方法
 下载Release中的压缩包，打开main.exe，在弹出的窗口中输入学号以及服务大厅的密码，点击确认：
 
-![主界面](assets/img/ui.png)
+![主界面](https://github.com/Dreamcreationman/uestc-login/tree/main/assets/img/ui.png)
 
 然后在任务栏的托盘上单击右键，点击启动即可:
 
-![主界面](assets/img/tray.png)
+![主界面](https://github.com/Dreamcreationman/uestc-login/tree/main/assets/img/tray.png)
 
 ### 开机自启动
 如果你想开机自启动，Windows用户请在`C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp`下创建一个main.exe的快捷方式最方便。
