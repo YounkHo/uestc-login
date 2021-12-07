@@ -1,13 +1,9 @@
 import sys
-# 从PyQt库导入QtWidget通用窗口类,基本的窗口集在PyQt5.QtWidgets模块里.
-from PyQt5.QtWidgets import QApplication, QMainWindow
-from window import Ui_mainWindow
-
+from PyQt5.QtWidgets import QApplication
+from gui.main_widget import MainWidget
 
 if __name__ == '__main__':
-    ui = Ui_mainWindow()
     app = QApplication(sys.argv)
-    QApplication.setQuitOnLastWindowClosed(False)
-    w = QMainWindow()
-    ui.setupUi(w, app)
+    QApplication.setQuitOnLastWindowClosed(False)  # 关闭最后一个窗口不退出程序
+    window = MainWidget()
     sys.exit(app.exec_())
