@@ -1,28 +1,32 @@
 # uestc-login
 
-## Parameters Description
-- param username: username for login : str
-- param passwd: password for login : str
-- param alway_online: if True, Once offline, the program will automatically log in : bool
-- param ac_id: This parameter is different in different buildings of the school : str
-- param domain: This parameter is different in different buildings of the school : str
-- param base_auth_url: This parameter is different in different buildings of the school : str
-- param headers: You can construct a header pool to prevent the system from anti-crawling : dict
+## 程序简介
+该程序适用于电子科大校园网自动登录，目前仅支持主楼、硕丰组团（不同域的网关好像不同，可自行测试添加），该程序基于PyQt5开发
 
---- following params are system default params, No need to modify under normal circumstances ---
-- param n: 
-- param type: 
-- param enc_ver: 
-- param action: 
-- param challenge_url: 
-- param login_url: 
-- param status_url: 
+## 使用方法
+下载Release中的压缩包，打开main.exe，在弹出的窗口中输入学号以及服务大厅的密码，点击确认：
 
-## Usage
-Fow Windows
+![主界面](assets/img/ui.png)
 
-> 1. First modify username and password in auto.bat
-> 2. Then put auto.bat in C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp (Admin Authentication may need)
+然后在任务栏的托盘上单击右键，点击启动即可:
 
-## Statements
-This program is for personal learning purpose, and it is strictly forbidden to use it for other malicious operations.
+![主界面](assets/img/tray.png)
+
+### 开机自启动
+如果你想开机自启动，Windows用户请在`C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp`下创建一个main.exe的快捷方式最方便。
+
+> 不忍直视我的ui，我实在太懒了
+
+## 说不定会做的
+- [ ] 做好看点?
+- [ ] 增加其他区域的支持
+- [ ] 非明文存储用户信息
+- [ ] 一键开机自启动
+
+## 已知的问题
+- 每次开启首次点击系统托盘右键卡顿
+- 退出卡顿
+
+
+## Acknowledgment
+该程序仅供个人学习使用，严谨用于非法用途

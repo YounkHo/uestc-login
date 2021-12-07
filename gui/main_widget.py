@@ -23,7 +23,7 @@ class MainWidget(QMainWindow, Ui_mainWindow):
         self.setFixedSize(self.width(), self.height())
 
         self.openAction = QAction("启动", self)
-        self.openAction.setIcon(QApplication.style().standardIcon(QApplication.style().SP_DialogCancelButton))
+        self.openAction.setIcon(QApplication.style().standardIcon(QApplication.style().SP_DialogApplyButton))
         self.configAction = QAction("配置", self)
         self.configAction.setIcon(QApplication.style().standardIcon(QApplication.style().SP_FileDialogEnd))
         self.logAction = QAction("日志", self)
