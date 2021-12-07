@@ -38,14 +38,16 @@ class Login:
         self.challenge_url = os.path.join(base_auth_url, challenge_url)
         self.login_url = os.path.join(base_auth_url, login_url)
         self.status_url = os.path.join(base_auth_url, status_url)
+        self.status = 0
+        self.tried = 0
 
-    def run(self):
+    def run(self, tp):
+        self.tp = tp
         while self.alway_online:
             self.check_status()
             time.sleep(10)
         else:
             self.check_status()
-
 
     def login(self):
         self.callback = self.get_callback()
@@ -76,9 +78,19 @@ class Login:
         }
         response = requests.get(self.login_url, params=params, headers=self.headers).text
         content = json.loads(response.replace(self.callback, '')[1:-1])
-        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), content['res'],
-              content['username'].replace(self.domain, ''), self.ip)
-        return content['res'], content['username'].replace(self.domain, ''), self.ip
+        print(content)
+        if "error_msg" in content and "res" in content and content['error'] == "login_error" and self.tried <= 3:
+            self.tp.showMessage(self.username.replace(self.domain, '') + ' 登录失败', content['error_msg'], icon=2)
+            self.tried += 1
+            self.status = 0
+
+        elif "ploy_msg" in content and "res" in content and content['ploy_msg'] == "E0000: Login is successful.":
+            self.tp.showMessage(self.username.replace(self.domain, '') + ' 登录成功', content['ploy_msg'], icon=1)
+            self.tried = 0
+            self.status = 0
+
+        print("Login: ", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), content['res'], self.ip)
+        return content['res'], self.ip
 
     def get_chksum(self, challenge, info):
         chkstr = challenge + self.username
@@ -130,7 +142,13 @@ class Login:
         response = requests.get(self.status_url, params=params, headers=self.headers).text
         content = json.loads(response.replace("dasdasdsada", '')[1:-1])
         print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), content)
+        if 'res' not in content and "error" in content and content['error'] == 'ok' and self.status != 0:
+            self.tp.showMessage(content['user_name'] + ' 网络正常', "当前IP："+content['online_ip'], icon=1)
+            self.status = 0
         if 'res' in content and content['res'] == 'not_online_error':
+            if self.status < 3:
+                self.tp.showMessage(self.username.replace(self.domain, '') + ' 已离线', "登出IP："+content['online_ip'], icon=2)
+                self.status += 1
             self.login()
 
 
