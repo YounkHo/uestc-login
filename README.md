@@ -10,7 +10,7 @@
 
 然后在任务栏的托盘上单击右键，点击启动即可:
 
-![主界面](assets/img/tray.png)
+![托盘界面](assets/img/tray.png)
 
 ### 开机自启动
 如果你想开机自启动，Windows用户请在`C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp`下创建一个main.exe的快捷方式最方便。
