@@ -91,6 +91,10 @@ class MainWidget(QMainWindow, Ui_mainWindow):
             self.logger.warning("Launch Thread Start: start login and online status check")
             self.openAction.setIcon(QApplication.style().standardIcon(QApplication.style().SP_DialogCancelButton))
             self.openAction.setText("关闭")
+            if not self.loginThread.is_alive(): # 由于休眠导致的线程死亡
+                self.logger.warning("Due to unknown reason, Thread has dead, Restarted now!")
+                if self.loginThread: self.loginThread.start()
+                else: self.initLogin()
         else:
             self.logger.warning("Launch Thread Stop")
             self.openAction.setIcon(QApplication.style().standardIcon(QApplication.style().SP_DialogApplyButton))
@@ -188,11 +192,19 @@ class MainWidget(QMainWindow, Ui_mainWindow):
             return
         self.set_launched_ui(not self.launched)
         self.logger.warning("Change Launch Status: {}".format(str(self.launched)))
+        self.logger.warning("Thread Status: {}".format(str(self.loginThread.is_alive())))
 
     def run(self):
         while self.running:
             if self.launched:
-                content = self.login.check_status()
+                try:
+                    content = self.login.check_status()
+                except Exception as err:
+                    self.logger.warning("When Check Status Exception")
+                    self.logger.critical(err)
+                except SystemExit as err:
+                    self.logger.warning("When Check Status System Exit Error")
+                    self.logger.critical(err)
                 self.logger.info(content)
                 if 'res' not in content and "error" in content and content['error'] == 'ok' and self.login.status != 0: #我也记不得这段代码当时是判断啥场景了，操！
                     self.trayIcon.showMessage(content['user_name'] + ' 网络正常', "当前IP："+content['online_ip'], icon=1)
@@ -205,7 +217,14 @@ class MainWidget(QMainWindow, Ui_mainWindow):
                         self.trayIcon.showMessage(self.login.username.replace(self.login.domain, '') + ' 已离线', "登出IP："+content['online_ip'], icon=2)
                         self.logger.critical(content)
                         self.login.status += 1
-                    result = self.login.login()
+                    try:
+                        result = self.login.login()
+                    except Exception as err:
+                        self.logger.warning("When Login Exception")
+                        self.logger.critical(err)
+                    except SystemExit as err:
+                        self.logger.warning("When Login System Exit Error")
+                        self.logger.critical(err)
                     self.logger.info(result)
                     if "error_msg" in result and "res" in result and result['error'] == "login_error" and self.login.tried <= 2:
                         self.trayIcon.showMessage(self.login.username.replace(self.login.domain, '') + ' 登录失败', result['error_msg'], icon=2)
