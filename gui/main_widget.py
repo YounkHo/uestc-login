@@ -52,11 +52,11 @@ class MainWidget(QMainWindow, Ui_mainWindow):
         self.login = None
         self.launched = False #是否循环登录的标志位，设为否不自动循环登录
         self.running = True #子线程运行的标志位。设为否子线程强自退出，
+        self.loginThread = None
 
         self.initLog()
-        self.initLogin()
         self.initConnect()
-
+        self.initLogin()
         self.loginThread = threading.Thread(target=self.run, name='login_thread')
         self.loginThread.start()
 
@@ -91,7 +91,7 @@ class MainWidget(QMainWindow, Ui_mainWindow):
             self.logger.warning("Launch Thread Start: start login and online status check")
             self.openAction.setIcon(QApplication.style().standardIcon(QApplication.style().SP_DialogCancelButton))
             self.openAction.setText("关闭")
-            if not self.loginThread.is_alive(): # 由于休眠导致的线程死亡
+            if self.loginThread and not self.loginThread.is_alive(): # 由于休眠导致的线程死亡
                 self.logger.warning("Due to unknown reason, Thread has dead, Restarted now!")
                 if self.loginThread: self.loginThread.start()
                 else: self.initLogin()
@@ -208,7 +208,7 @@ class MainWidget(QMainWindow, Ui_mainWindow):
                 self.logger.info(content)
                 if 'res' not in content and "error" in content and content['error'] == 'ok' and self.login.status != 0: #我也记不得这段代码当时是判断啥场景了，操！
                     self.trayIcon.showMessage(content['user_name'] + ' 网络正常', "当前IP："+content['online_ip'], icon=1)
-                    self.trayIcon.setToolTip("成电网络\n\n当前用户：" + content['user_name'] + ' \n当前IP：' + content['online_ip'])
+                    self.trayIcon.setToolTip("成电网络\n\n当前用户：" + content['user_name'] + ' \n当前IP：' + content['online_ip'] + ' \n上线时间：\n' + time.strftime('%m-%d %H:%M', time.localtime(content['add_time'])))
                     self.logger.warning(content['user_name'] + ' 网络正常 '+ "；当前IP："+content['online_ip'])
                     self.login.status = 0
                 elif 'res' in content and content['res'] == 'not_online_error':
@@ -233,7 +233,7 @@ class MainWidget(QMainWindow, Ui_mainWindow):
                         self.login.status = 1
                     elif "ploy_msg" in result and "res" in result and result['ploy_msg'] == "E0000: Login is successful.":
                         self.trayIcon.showMessage(self.login.username.replace(self.login.domain, '') + ' 登录成功', result['ploy_msg'], icon=1)
-                        self.trayIcon.setToolTip("成电网络\n\n当前用户：" + self.login.username.replace(self.login.domain, '') + ' \n当前IP：' + self.login.ip)
+                        self.trayIcon.setToolTip("成电网络\n\n当前用户：" + self.login.username.replace(self.login.domain, '') + ' \n当前IP：' + self.login.ip + ' \n上线时间：\n' + time.strftime('%m-%d %H:%M', time.localtime()))
                         self.logger.warning("Login Res："+result['res']+"； Login IP："+self.login.ip)
                         self.login.tried = 0
                         self.login.status = 0
